@@ -1,0 +1,27 @@
+--- a/caddyhttp/header/header.go
++++ b/caddyhttp/header/header.go
+@@ -27,11 +27,6 @@ func (h Headers) ServeHTTP(w http.ResponseWriter, r *http.Request) (int, error)
+ 	for _, rule := range h.Rules {
+ 		if httpserver.Path(r.URL.Path).Matches(rule.Path) {
+ 			for name := range rule.Headers {
+-				if name == "Caddy-Sponsors" || name == "-Caddy-Sponsors" {
+-					// see EULA
+-					continue
+-				}
+-
+ 				// One can either delete a header, add multiple values to a header, or simply
+ 				// set a header.
+ 
+--- a/caddyhttp/httpserver/server.go
++++ b/caddyhttp/httpserver/server.go
+@@ -342,10 +342,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+ 	c := context.WithValue(r.Context(), OriginalURLCtxKey, urlCopy)
+ 	r = r.WithContext(c)
+ 
+-	w.Header().Set("Server", caddy.AppName)
+-	sponsors := "Minio, Uptime Robot, and Sourcegraph"
+-	w.Header().Set("Caddy-Sponsors", "This free web server is made possible by its sponsors: "+sponsors)
+-
+ 	status, _ := s.serveHTTP(w, r)
+ 
+ 	// Fallback error response in case error handling wasn't chained in
